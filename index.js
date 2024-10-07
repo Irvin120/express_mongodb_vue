@@ -4,11 +4,10 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
-// const multer = require("multer");
 
 var CONNECTION_STRING = "mongodb+srv://adminIrvin:YKCTZmwREwBmxDeK@cluster0.il69f.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 var DATABASENAME = "todoappdb";
-// var database;
+var database;
 
 app.listen(3307, async () => {
   try {
@@ -20,10 +19,15 @@ app.listen(3307, async () => {
   }
 });
 
+app.get("/api/todoapp/get", async (req, res) => {
+  if (!database) {
+    return res.status(500).send("Database connection not established");
+  }
 
-
-
-
-
-
-
+  try {
+    const datos = await database.collection("todoappcollection").find({}).toArray();
+    res.json(datos);
+  } catch (error) {
+    res.status(500).send("Error fetching data");
+  }
+});
