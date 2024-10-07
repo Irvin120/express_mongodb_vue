@@ -47,3 +47,15 @@ app.post("/api/todoapp/addnotes", async (req, res)=>{
     res.status(500).send(error.message);
     }
 })
+
+app.delete('/api/todoapp/deletenotes', async (req, res) =>{
+    if (!database) {
+        return res.status(500).send("Database connection not established");
+    }
+    try {
+        const deleteInfo = database.collection("todoappcollection").deleteOne({ _id: req.body._id });
+        res.status(200).send({deleteInfo})
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+})
