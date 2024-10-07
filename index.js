@@ -4,6 +4,8 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
+app.use(express.json());
+
 
 var CONNECTION_STRING = "mongodb+srv://adminIrvin:YKCTZmwREwBmxDeK@cluster0.il69f.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 var DATABASENAME = "todoappdb";
@@ -31,3 +33,17 @@ app.get("/api/todoapp/get", async (req, res) => {
     res.status(500).send("Error fetching data");
   }
 });
+
+app.post("/api/todoapp/addnotes", async (req, res)=>{
+    if(!database) {
+        return res.status(500).send("Database connection not established");
+    }
+    try {
+        const count = await database.collection("todoappcollection").countDocuments({});
+        const obj = { _id: count + 1, name: req.body.name };
+        const newDoc = await database.collection("todoappcollection").insertOne(obj);
+        res.status(200).send({newDoc})
+    } catch (error) {   
+    res.status(500).send(error.message);
+    }
+})
